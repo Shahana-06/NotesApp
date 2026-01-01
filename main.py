@@ -1,4 +1,8 @@
 from fastapi import FastAPI
+from config import session, engine 
+import db_model
+
+db_model.Base.metadata.create_all(bind = engine)
 
 app = FastAPI()
 
@@ -11,6 +15,7 @@ def home():
 
 @app.get("/notes")
 def get_notes(notes: str):
+    db = session ()
     return {"notes": notes}
 
 @app.post("/notes")
