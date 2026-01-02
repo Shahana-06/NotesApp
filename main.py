@@ -41,18 +41,20 @@ def home():
     return {"message": "Hello World"}
 
 @app.get("/notes")
-def get_notes(db: Session = Depends (get_db) ):
+def get_notes(db: Session = Depends (get_db)):
 #db dependency (on get_db) is injected using Depends from fast_api
-
     db_notes = db.query(db_model.Notes).all()
-
     return db_notes
+
+@app.get("/notes/{id}")
+def get_notes_by_id (id: int, db: Session = Depends (get_db)):
+    db_note = db.query(db_model.Notes). filter(db_model.Notes.note_id == id).first()
+    return db_note
 
 @app.post("/notes")
 def create_note(title: str, content: str):
     note = Notes(note_id= len(notes) + 1, note_name= title, note_content= content)
-    # notes.append(note)
-    db.add(db_model.Notes(**note.model_dump()))
+    notes.append(note)
     return note
 
 @app.delete("/notes/{note_id}")
