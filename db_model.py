@@ -3,7 +3,7 @@ from sqlalchemy import Integer, Float, String, Column
 
 Base = declarative_base()
 
-class Product (Base):
+class Notes (Base):
 
     __tablename__ = "Notes"
     note_id = Column (Integer, primary_key = True, index = True)
