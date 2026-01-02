@@ -49,7 +49,10 @@ def get_notes(db: Session = Depends (get_db)):
 @app.get("/notes/{id}")
 def get_notes_by_id (id: int, db: Session = Depends (get_db)):
     db_note = db.query(db_model.Notes). filter(db_model.Notes.note_id == id).first()
-    return db_note
+    if db_note:
+        return db_note
+    else:
+        return "Note not present"
 
 @app.post("/notes")
 def create_note(title: str, content: str):
