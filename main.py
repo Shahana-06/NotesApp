@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from config import session, engine 
 from model import Notes
+from sqlalchemy.orm import Session
 import db_model
 
 app = FastAPI()
@@ -13,9 +14,18 @@ notes = [
     Notes (note_id = 2, note_name= "Things to pack", note_content="1. Laptop, charger\n2. Visa, Passport\n3. Offer Letter"),
 ]
 
+#To start and end the session automatically, once
+def get_db():
+    db = session()
+    try:
+        yield db
+    finally:
+        db.close()
+
 def init_db ():
     db = session()
 
+    #To ensure same data is added only once
     count = db.query (db_model.Notes).count
 
     if count==0:
@@ -31,9 +41,12 @@ def home():
     return {"message": "Hello World"}
 
 @app.get("/notes")
-def get_notes():
-    # db = session ()
-    return notes
+def get_notes(db: Session = Depends (get_db) ):
+#db dependency (on get_db) is injected using Depends from fast_api
+
+    db_notes = db.query(db_model.Notes).all()
+
+    return db_notes
 
 @app.post("/notes")
 def create_note(title: str, content: str):
