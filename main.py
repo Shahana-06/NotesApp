@@ -48,17 +48,16 @@ def get_notes(db: Session = Depends (get_db)):
 
 @app.get("/notes/{id}")
 def get_notes_by_id (id: int, db: Session = Depends (get_db)):
-    db_note = db.query(db_model.Notes). filter(db_model.Notes.note_id == id).first()
+    db_note = db.query(db_model.Notes).filter(db_model.Notes.note_id == id).first()
     if db_note:
         return db_note
     else:
         return "Note not present"
 
 @app.post("/notes")
-def create_note(title: str, content: str):
-    note = Notes(note_id= len(notes) + 1, note_name= title, note_content= content)
-    notes.append(note)
-    return note
+def create_note(note: Notes, db: Session = Depends (get_db)):
+    db.add(db_model.Notes(**note.model_dump()))
+    return "✅"
 
 @app.delete("/notes/{note_id}")
 def delete_note(note_id: int):
