@@ -1,28 +1,24 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from dotenv import load_dotenv
+from urllib.parse import quote_plus
 import os
 
-# Load environment variables
-load_dotenv()
-
 # Database configuration
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "Shan1234$$")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_NAME = os.getenv("DB_NAME", "shahanas")
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "Shan1234$$")
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_PORT = os.environ.get("DB_PORT", "5432")
+DB_NAME = os.environ.get("DB_NAME", "shahanas")
 
 # Create database URL with proper encoding for special characters
-from urllib.parse import quote_plus
 db_url = f"postgresql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # Create engine with connection pooling
 engine = create_engine(
     db_url,
-    pool_pre_ping=True,  # Verify connections before using
-    pool_size=5,  # Number of connections to maintain
-    max_overflow=10  # Max additional connections when pool is full
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10
 )
 
 # Create session factory
